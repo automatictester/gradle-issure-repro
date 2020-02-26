@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'java-gradle-plugin'
+}
+
+sourceSets {
+    functionalTest {
+        java {
+            srcDir file('src/functionalTest/java')
+        }
+        resources {
+            srcDir file('src/functionalTest/resources')
+        }
+        compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+task functionalTest(type: Test) {
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    classpath = sourceSets.functionalTest.runtimeClasspath
+}
+
+check.dependsOn functionalTest
+
+gradlePlugin {
+    testSourceSets sourceSets.functionalTest
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testImplementation gradleTestKit()
+    testImplementation 'org.testng:testng:7.1.1'
+}
+
+// uncomment to get rid of warnings
+//processFunctionalTestResources {
+//    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+//}
